@@ -1,0 +1,5 @@
+*.o
+*.swp
+.vim.session
+test.c
+temp
