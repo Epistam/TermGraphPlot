@@ -50,7 +50,7 @@ void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int 
 		for(i = -graph->xSize/2 ; i < graph->xSize/2 ; i++) { // Graph size is 2x col size, but we need half of it on each side
 		
 			// y = f(x) computation, x and y being in graph units ; also account for zoom settings
-			realHeight = slope*(graph->xZoom*i+xOffset)+yOffset; // Apply x-zoom to x, add xOffset (Hz translation), then compute real y and add yOffset
+			realHeight = slope*((1/graph->xZoom)*i+xOffset)+yOffset; // Apply x-zoom to x, add xOffset (Hz translation), then compute real y and add yOffset, 1/xZoom cause unzooming by 0.5x would mean expand what is displayed on x axis by a factor of 2
 			graphHeight = (int)round(graph->yZoom*realHeight); // Apply yZoom and round to closest integer to get graph y
 			
 			if(graphHeight < graph->ySize && graphHeight > -graph->ySize && !(!init && (i == 0 || graphHeight == 0))) { // Check if the point is within graph bounds or on axes lines
@@ -108,7 +108,7 @@ GraphPtr initGraph() {
 	Graph *graph = malloc(sizeof(Graph));
 	graph->xSize = ws.ws_col/2;
 	graph->ySize = ws.ws_row/2;
-	graph->xZoom = 1;
+	graph->xZoom = 2;
 	graph->yZoom = 1;
 
 	// Draw main axes
