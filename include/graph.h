@@ -6,8 +6,8 @@
 typedef struct {
 	int xSize; // In chars, 1/2 the term size cuz we want square units
 	int ySize;
-	int xZoom;
-	int yZoom;
+	double xZoom;
+	double yZoom;
 	int zoomMode; // 0 for linked, 1 for hz only, 2 for vert only. Zoom with arrows, use 'z' to change mode
 } Graph, *GraphPtr;
 
@@ -22,7 +22,7 @@ void setBgColor(int color); // idem
 
 // Draw graph unit sized dot
 void drawDot(int mode, int color); // Draw graph unit sized dot at current position : mode = 0 for background color (x / y-axis), mode = 1 for plotting (with '+') + idem
-void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode); // Draws a line. Settings are self explanatory, mode is the same as in drawDot
+void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode, int init); // Draws a line. Settings are self explanatory, mode is the same as in drawDot
 void drawFct(GraphPtr graph, Fct fnction); // TODO : merge drawLine in drawFct
 
 GraphPtr initGraph();

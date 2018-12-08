@@ -24,21 +24,21 @@ void setBgColor(int color) {
 
 // Draws 2 char wide dot at current cursor placement. mode = 0 for background color, mode = 1 for '+'
 void drawDot(int mode, int color) { // On graph, takes into account the contraction with cell size
-	if(mode) {
+	if(!mode) {
 		setBgColor(color); // Set draw color 
 		fputs(" ",stdout);
 		fputs(" ",stdout);
 		resetColors();
 	} else {
 		setColor(color);
-		fputs(" ", stdout);
-		fputs(" ", stdout);
+		fputs("+", stdout);
+		fputs("+", stdout);
 		resetColors();
 	}
 }
 
 // Draws a straight line. isVertical = 1 to disregard slope and raw a vertical line
-void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode) { // No graph pointer cuz no edition
+void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode, int init) { // No graph pointer cuz no edition
 	// Offset is in normal unit, i is in screen unit
 	int i,j;
 
@@ -47,30 +47,27 @@ void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int 
 		int graphHeight;
 
 		// First pass : draw actual points
-		for(i = -graph->xSize ; i < graph->xSize ; i++) { // Graph size is 2x col size, but we need half of it on each side
+		for(i = -graph->xSize/2 ; i < graph->xSize/2 ; i++) { // Graph size is 2x col size, but we need half of it on each side
 		
-			// Slide the cursor along the x-axis at the current graph x
-			termGoto(i+graph->xSize,graph->ySize/2);
-			
 			// y = f(x) computation, x and y being in graph units ; also account for zoom settings
 			realHeight = slope*(graph->xZoom*i+xOffset)+yOffset; // Apply x-zoom to x, add xOffset (Hz translation), then compute real y and add yOffset
 			graphHeight = (int)round(graph->yZoom*realHeight); // Apply yZoom and round to closest integer to get graph y
 			
-			if(graphHeight < graph->ySize/2) { // Check if the point is within graph bounds
-				termGoto(i+graph->xSize,graphHeight);
+			if(graphHeight < graph->ySize && graphHeight > -graph->ySize && !(!init && (i == 0 || graphHeight == 0))) { // Check if the point is within graph bounds or on axes lines
+				termGoto(i*2+graph->xSize,(-graphHeight)+graph->ySize); // Minus because y origin is the top of screen
 				drawDot(mode,15); // Draw the point
 			}
 		}
 		// Second pass : draw fill-up points to make lines continuous (TODO find a better way)
 		// Notice this is a thing only for straight lines. Need to find a way to assess continuity so we don't end up linking +-inf if f(x) = 1/x
 		// Arbitrarily start from the left to fill up holes 
-		int h1, h2;
+/*		int h1, h2;
 		int sign; 
 		for(i = -graph->xSize + 1 ; i < graph->xSize ; i++) {
 			h2 = (int)round(graph->yZoom*(slope*(graph->xZoom*i+xOffset)+yOffset));
 			h1 = (int)round(graph->yZoom*(slope*(graph->xZoom*(i-1)+xOffset)+yOffset));
 			// Code for mere mortals
-/*			if(h2 - h1 > 0) { // h2 is over h1
+*//*			if(h2 - h1 > 0) { // h2 is over h1
 				for(j = h1+1 ; j < h2 ; j++) {
 					termGoto(i-1, j); 
 					drawDot(mode, 15);
@@ -81,16 +78,16 @@ void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int 
 					drawDot(mode, 15);
 				}
 			} // Nothing to fill if they're both at the same height
-*/
+*//*
 			// Code for the Chad ternary users
 			sign = ((h2-h1 > 0)? 1 : -1);
 			for(j = h1 + sign ; sign*j < sign*h2 ; j += sign) {
-					termGoto(i-1, j); 
-					drawDot(mode, 15);
+				termGoto(i-1, j); 
+				drawDot(mode, 15);
 			}
-		}
+		}*/
 	} else {
-		int xOffsetIntegBuf = (int)round(graph->xZoom*xOffset);
+		int xOffsetIntegBuf = (int)round(graph->xZoom*xOffset) + graph->xSize;
 		for(int i = 0 ; i < 2*graph->ySize ; i++) {
 			if(i != graph->ySize) { // Make sure we don't overwrite our beautiful axes lines
 				termGoto(xOffsetIntegBuf, i);
@@ -105,14 +102,18 @@ GraphPtr initGraph() {
 	// Getting terminal infos
 	struct winsize ws = getTermSize();
 
+	termClear();
+
 	// Initializing graph
 	Graph *graph = malloc(sizeof(Graph));
-	graph->xSize = ws.ws_col;
-	graph->ySize = ws.ws_row;
+	graph->xSize = ws.ws_col/2;
+	graph->ySize = ws.ws_row/2;
+	graph->xZoom = 1;
+	graph->yZoom = 1;
 
 	// Draw main axes
-	drawLine(graph,0,0,0,0,0); // x-axis
-	drawLine(graph,0,0,0,1,0); // y-axis
+	drawLine(graph,0,0,0,0,0,1); // x-axis
+	drawLine(graph,0,0,0,1,0,1); // y-axis
 
 	return graph;
 }
@@ -130,6 +131,6 @@ void drawGraph(GraphPtr graph, Fct fnction) { // One function at a time ; refres
 	graph->ySize = ws.ws_row;
 
 	// Draw main axes
-	drawLine(graph,0,0,0,0,0); // x-axis
-	drawLine(graph,0,0,0,1,0); // y-axis
+	drawLine(graph,0,0,0,0,0,1); // x-axis
+	drawLine(graph,0,0,0,1,0,1); // y-axis
 }
