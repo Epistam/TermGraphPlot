@@ -70,13 +70,13 @@ void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int 
 				// Code for mere mortals
 				if(h2 - h1 > 0) { // h2 is over h1
 					for(j = h1+1 ; j < h2 ; j++) {
-						termGoto(((i-1)*2)+graph->xSize, -(j*2)+graph->ySize); 
-						drawDot(mode, 15);
+						termGoto(((i-1)*2)+graph->xSize, -(j)+graph->ySize); 
+						drawDot(mode, 42);
 					}
 				} else if(h2 - h1 < 0) { // h2 is over h1 
 					for(j = h1-1 ; j > h2 ; j--) {
-						termGoto(((i-1)*2)+graph->xSize, -(j*2)+graph->ySize); 
-						drawDot(mode, 15);
+						termGoto(((i-1)*2)+graph->xSize, -(j)+graph->ySize); 
+						drawDot(mode, 0);
 					}
 				} // Nothing to fill if they're both at the same height
 
