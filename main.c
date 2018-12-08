@@ -4,6 +4,7 @@
 #include <unistd.h> // For STDIN_FILENO
 #include <sys/ioctl.h> // For term interaction / sending flags to it 
 #include "include/term.h"
+#include "include/eval.h"
 #include "include/graph.h"
 
 int main(void) {

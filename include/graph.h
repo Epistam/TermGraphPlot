@@ -1,31 +1,33 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+/********************
+ * Graph management *
+ ********************/
+
 #define GRAPH_AXIS_COLOR 15
 
 typedef struct {
-	int xSize; // In chars, 1/2 the term size cuz we want square units
+	int xSize; // x Sizes will be double those of a normal terminal : we want square units
 	int ySize;
 	double xZoom;
 	double yZoom;
-	int zoomMode; // 0 for linked, 1 for hz only, 2 for vert only. Zoom with arrows, use 'z' to change mode
+	int zoomMode; // 0 for linked, 1 for hz only, 2 for vert only. Zoom with arrows, change mode using menu or keybind TODO
 } Graph, *GraphPtr;
 
-typedef struct {
-	int a; // Placeholder
-} Fct;
+// Draws graph unit sized dot at current position
+// mode = 0 for background color plotting 
+// mode = 1 for '+' plotting
+void drawDot(int mode, int color);
 
-// Term color related subroutines
-void resetColors();
-void setColor(int color); // color is the 255 colors mode bash code 
-void setBgColor(int color); // idem
+// Function plotting
+// Draw a line. Hopefully, soon transfer regular lines with slopes to drawFct and keep axis drawing only here, and take care of the x = a case  TODO
+// mode is same as drawDot
+void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode, int init); 
+void drawFct(GraphPtr graph, Fct fnction); 
 
-// Draw graph unit sized dot
-void drawDot(int mode, int color); // Draw graph unit sized dot at current position : mode = 0 for background color (x / y-axis), mode = 1 for plotting (with '+') + idem
-void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode, int init); // Draws a line. Settings are self explanatory, mode is the same as in drawDot
-void drawFct(GraphPtr graph, Fct fnction); // TODO : merge drawLine in drawFct
-
-GraphPtr initGraph();
-void drawGraph(GraphPtr graph, Fct fnction); // One function at a time ; refreshes the graph display with given function and graph settings
+// Global graph routines
+GraphPtr initGraph(); // Init graph with default values and plot x and y axis
+void drawGraph(GraphPtr graph, Fct fnction); // Refreshes the graph display with given function and graph settings
 
 #endif
