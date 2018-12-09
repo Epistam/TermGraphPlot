@@ -23,7 +23,8 @@ void drawDot(int mode, int color);
 // Function plotting
 // Draw a line. Hopefully, soon transfer regular lines with slopes to drawFct and keep axis drawing only here, and take care of the x = a case  TODO
 // mode is same as drawDot
-void drawLine(GraphPtr graph, double slope, double xOffset, double yOffset, int isVertical, int mode, int init); 
+int *plotLine(GraphPtr graph, double slope, double xoffset, double yOffset);
+void drawLine(GraphPtr graph, int *plot, int isVertical, int mode, int init);
 void drawFct(GraphPtr graph, Fct fnction); 
 
 // Global graph routines
