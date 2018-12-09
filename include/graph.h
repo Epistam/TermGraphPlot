@@ -18,7 +18,8 @@ typedef struct {
 // Draws graph unit sized dot at current position
 // mode = 0 for background color plotting 
 // mode = 1 for '+' plotting
-void drawDot(int mode, int color);
+void drawDot(int mode, int color, char text[3]);
+void drawScale(GraphPtr graph);
 
 // Function plotting
 // Draw a line. Hopefully, soon transfer regular lines with slopes to drawFct and keep axis drawing only here, and take care of the x = a case  TODO

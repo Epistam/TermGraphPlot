@@ -14,7 +14,7 @@ int main(void) {
 
 	//drawLine(graph,1,0,0,0,1,0); // x-axis
 	
-	int *line = plotLine(graph, 4, 0, 0);
+	int *line = plotLine(graph, 1, 0, 0);
 	drawLine(graph,line,0,1,0);
 
 	resetTerm();
